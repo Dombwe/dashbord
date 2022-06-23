@@ -24,13 +24,9 @@ export async function getEvents() {
 
 export async function getEvent(id) {
   const url = BASE_URL + `${route}/${id}`;
-  const response = await axios.get(url, { headers: HEADERS });
+  const response = await axios.get(url, {headers: HEADERS});
   if (response.status === 200) {
-    console.log('****************response.data*******************');
-    console.log(response.data);
     if (response.data.status === true) {
-      console.log('****************response.data.data*******************');
-    console.log(response.data.data);
       return response.data.data;
     }
     else {

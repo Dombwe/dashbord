@@ -61,6 +61,7 @@ export async function getPartnersByName(name) {
         const response = await axios.delete(url, {headers:HEADERS});
         if (response.status === 200) {
             toast.success("Partner deleted successfully");
+            getPartners();
         }
     }
  }

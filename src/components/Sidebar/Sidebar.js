@@ -12,20 +12,19 @@ import { logoutUser } from "../../actions/user";
 
 import lightDashboardIcon from "../../images/light-dashboard.svg";
 import darkDashboardIcon from "../../images/dark-dashboard.svg";
-import lightTables from "../../images/tables.svg";
-import darkTables from "../../images/tables-dark.svg";
-import lightUI from "../../images/ui-elements.svg";
-import darkUI from "../../images/ui-elements-dark.svg";
-import lightTypography from "../../images/Typography.svg";
-import darkTypography from "../../images/Typography-dark.svg";
-import logo from "../../images/logo.svg";
-import settingsIcon from "../../images/settings.svg";
-import logoutIcon from "../../images/logout.svg";
-import accountIcon from "../../images/account.svg";
 
 
 
 import intercashImage from '../../images/appimage/logo.png'
+
+export const user = {
+  'token': localStorage.getItem('token'),
+  'name': localStorage.getItem('name'),
+  'username': localStorage.getItem('username'),
+  'contact': localStorage.getItem('contact'),
+  'level': localStorage.getItem('level'),
+  'authenticated': localStorage.getItem('authenticated'),
+};
 
 class Sidebar extends React.Component {
 
@@ -236,7 +235,7 @@ class Sidebar extends React.Component {
               )}
             </LinksGroup>
 
-          <LinksGroup style= {{margin: "0px", padding: "0px"}}
+          {/* <LinksGroup style= {{margin: "0px", padding: "0px"}}
               onActiveSidebarItemChange={activeItem =>
                 this.props.dispatch(changeActiveSidebarItem(activeItem))
               }
@@ -253,6 +252,18 @@ class Sidebar extends React.Component {
             >
             <i class = "fa fa-bar-chart-o"></i>
       
+            </LinksGroup> */}
+
+             <LinksGroup
+              onActiveSidebarItemChange={activeItem =>
+                this.props.dispatch(changeActiveSidebarItem(activeItem))
+              }
+              header="Etats"
+              isHeader
+              index="Etats"
+              link="/app/administration/Etats/Etats"
+            >
+            <i class="fa fa-spinner" aria-hidden="true"></i>
             </LinksGroup>
 
             <LinksGroup
@@ -366,7 +377,8 @@ class Sidebar extends React.Component {
 
             <hr />
             
-            <LinksGroup
+          
+              <LinksGroup
               onActiveSidebarItemChange={activeItem =>
                 this.props.dispatch(changeActiveSidebarItem(activeItem))
               }
@@ -377,6 +389,11 @@ class Sidebar extends React.Component {
             >
               <i class = "fa fa-cogs"></i>
             </LinksGroup>
+         
+          
+           
+            
+            
             {/* <LinksGroup
               onActiveSidebarItemChange={activeItem =>
                 this.props.dispatch(changeActiveSidebarItem(activeItem))

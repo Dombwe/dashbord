@@ -1,9 +1,9 @@
 import React  from "react";
-import { Row, Col, Table } from "reactstrap";
+import { Row, Col, Button } from "reactstrap";
 import Widget from "../../../components/Widget";
 import s from "./Event.module.scss";
 import { getEvent } from "../../../controller/events";
-import { useHistory} from 'react-router-dom';
+import { useHistory, Link} from 'react-router-dom';
 
 const View = () => {
 
@@ -25,20 +25,24 @@ const View = () => {
     
       });
       var ev = JSON.parse(localStorage.getItem('event'));
-
-    console.log('****************event true*******************');
-    console.log(ev); 
     
 
     return (
 
         <div className={s.root}>
             <Row>
+           
+          
+       
                 <Col sm={12}>
                     <Widget
-                        customDropDown
+                        
                         title={<p className={"fw-bold text-warning"}>Event Details</p>}
                     >
+                        
+                        <Link to={`/app/administration/Tickets/addTicket/id=${id}`}>
+            <Button className="text-warning" style={{ fontSize: "20px", marginBottom: "20px", background: "black", marginTop: "10px", marginLeft: "800px"}}> Create Ticket </Button>
+          </Link>
 
                         <div className="main" style={{
                             display: "flex",
@@ -55,77 +59,74 @@ const View = () => {
                             </div>
                         </div>
                        
-                            <Table className={"table-hover table-bordered table-striped table-lg mt-lg mb-0"} borderless responsive>
-                                <thead>
-                                    <tr>
-                                        <th key={0} scope="col" className={"text-center pl-0"}>
-                                            ID
-                                        </th>
-                                        <th key={1} scope="col" className={"text-center pl-0"}>
-                                            Nom
-                                        </th>
-                                        <th key={2} scope="col" className={"text-center pl-0"}>
-                                            Promoteur
-                                        </th>
-                                        <th key={3} scope="col" className={"text-center pl-0"}>
-                                            Limite
-                                        </th>
-                                        <th key={4} scope="col" className={"text-center pl-0"}>
-                                            Lieu
-                                        </th>
-                                        <th key={5} scope="col" className={"text-center pl-0"}>
-                                            Debut E
-                                        </th>
-                                        <th key={6} scope="col" className={"text-center pl-0"}>
-                                            Fin E
-                                        </th>
-                                        <th key={7} scope="col" className={"text-center pl-0"}>
-                                            Debut P
-                                        </th>
-                                        <th key={8} scope="col" className={"text-center pl-0"}>
-                                            Fin P
-                                        </th>
-                                        <th key={9} scope="col" className={"text-center pl-0"}>
-                                            Categorie
-                                        </th>
-                                        <th key={10} scope="col" className={"text-center pl-0"}>
-                                            Utilisateur
-                                        </th>
-                                        <th key={11} scope="col" className={"text-center pl-0"}>
-                                            Status
-                                        </th>
-                                        <th key={12} scope="col" className={"text-center pl-0"}>
-                                            Action
-                                        </th>
-                                        <th key={12} scope="col" className={"text-center pl-0"}>
-                                            Détails
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody className="text-dark">
-                                    {
-                                //    ev.map((eve) => {
-                                //             return (
-                                                <tr>
-                                                    <td className={"pl-0 fw-normal text-center"}>{ev.id}</td>
-                                                    <td className={"pl-0 fw-normal text-center"}>{ev.name}</td>
-                                                    <td className={"pl-0 fw-normal text-center"}>{ev.organizer}</td>
-                                                    <td className={"pl-0 fw-normal text-center"}>{ev.limit_registration}</td>
-                                                    <td className={"pl-0 fw-normal text-center"}>{ev.location + '(' + ev.city + ')'}</td>
-                                                    <td className={"pl-0 fw-normal text-center"}>{ev.starting_date.slice(0, 10)}</td>
-                                                    <td className={"pl-0 fw-normal text-center"}>{(ev.ending_date).slice(0, 10)}</td>
-                                                    <td className={"pl-0 fw-normal text-center"}>{(ev.publishing_start_date).slice(0, 10)}</td>
-                                                    <td className={"pl-0 fw-normal text-center"}>{(ev.publishing_end_date).slice(0, 10)}</td>
-                                                    <td className={"pl-0 fw-normal text-center"}>{ev.category}</td>
-                                                    <td className={"pl-0 fw-normal text-center"}>{ev.account_id}</td>
-                                                    <td className={"pl-0 text-warning fw-normal"}>{ev.status}</td>
-                                                   
-                                                </tr>
-                                        //     );
-                                        // })
-                                    }
-                                </tbody>
-                            </Table>
+                <div className="container" style={{textAlign: "center"}}>
+                     <strong>ID: </strong>
+                     <span>{id} </span>
+                     <br />
+                     <br />
+                     <strong>Name: </strong>
+                     <span>{ev && ev.name} </span>
+                     <br />
+                     <br />
+                     <strong>Organizer: </strong>
+                     <span>{ev  && ev.organizer} </span>
+                     <br />
+                     <br />
+                     <strong>Limit places : </strong>
+                     <span>{ev && ev.limit_registration} </span>
+                     <br />
+                     <br />
+                     <strong>Location: </strong>
+                     <span>{ev && ev.location} </span>
+                     <br />
+                     <br />
+                     <strong>City: </strong>
+                     <span>{ev && ev.city} </span>
+                     <br />
+                     <br />
+                     <strong>Start Date: </strong>
+                     <span>{ev && ev.starting_date.slice(0, 10)} </span>
+                     <br />
+                     <br />
+                     <strong>Start Hours: </strong>
+                     <span>{ev && ev.starting_date.slice(11, 19)} </span>
+                     <br />
+                     <br />
+                     <strong>End Date : </strong>
+                     <span>{ev && ev.ending_date.slice(0, 10)} </span>
+                     <br />
+                     <br />
+                     <strong>End Hours : </strong>
+                     <span>{ev && ev.ending_date.slice(11, 19)} </span>
+                     <br />
+                     <br />
+                     <strong>Publish Start Date: </strong>
+                     <span>{ev && ev.publishing_start_date.slice(0, 10)} </span>
+                     <br />
+                     <br />
+                     <strong>Publish End Date: </strong>
+                     <span>{ev && ev.publishing_end_date.slice(0, 10)} </span>
+                     <br />
+                     <br />
+                     <strong>Categorie: </strong>
+                     <span>{ev && ev.category} </span>
+                     <br />
+                     <br />
+                     <strong>Account ID: </strong>
+                     <span>{ev && ev.account_id} </span>
+                     <br />
+                     <br />
+                     <strong>Statut: </strong>
+                     <span>{ev && ev.status} </span>
+                     <br />
+                     <br />
+                     <br />
+                     <br />
+                     <Link to="/app/administration/event/list">
+                         <button className="btn btn.edit">Go Back</button>
+                     </Link>
+                 </div>
+                          
                     </Widget>
                 </Col>
             </Row>

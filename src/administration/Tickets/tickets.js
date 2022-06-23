@@ -39,6 +39,7 @@ function Comission() {
 
     const promise = getTickets();
     const classes = useStyles();
+    
 
     promise.then((value) => {
         localStorage.setItem('tickets',JSON.stringify(value));
@@ -47,15 +48,15 @@ function Comission() {
 
     return (
         <div className={s.root}>
-          <Row>
+          {/* <Row>
         <Col sm={10} className="text-align:right"></Col>
         <Col sm={2} className="text-align:right">
           <Link to="/app/administration/Tickets/addTicket">
             <Button className="text-warning" style={{ fontSize: "20px", marginBottom: "10px", background: "black" }}> Create Ticket </Button>
           </Link>
         </Col>
-      </Row>
-            <TableContainer component={Paper} className={classes.TableContainer}>
+      </Row> */}
+    <TableContainer component={Paper} className={classes.TableContainer}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>

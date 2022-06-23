@@ -1,26 +1,11 @@
 import React from "react";
-import { Row, Col, Table } from "reactstrap";
-// import { ProgressBar } from 'react-bootstrap';
-
-//for search
-import cx from "classnames";
-import search from "../../images/search.svg";
-import {
-
-  InputGroupAddon,
-  InputGroup,
-  Input,
-  Form,
-
-} from "reactstrap";
-import TextField from "@mui/material/TextField";
+import { Row, Col} from "reactstrap";
 import usersImg from "../../images/usersImg.svg";
 import smileImg from "../../images/smileImg.svg";
-import { Button } from "@progress/kendo-react-buttons";
 import stocksImg from "../../images/stocks.svg";
 import { getTransactions, getFullTransactions } from "../../controller/transactions";
-import { getFullAccounts,BlockedAccount,UnBlockedAccount, TypeAccount } from "../../controller/accounts";
-import { getUsers } from "../../controller/users";
+import { getFullAccounts, TypeAccount } from "../../controller/accounts";
+import { getUsers} from "../../controller/users";
 
 
 import { chartData } from "./chartsMock";
@@ -30,20 +15,8 @@ import Widget from "../../components/Widget";
 import s from "./Dashboard.module.scss";
 import ApexChart from "react-apexcharts";
 
-//people
-import p1 from "../../images/people/p1.png";
-import p2 from "../../images/people/p2.png";
-import p3 from "../../images/people/p3.png";
-import p4 from "../../images/people/p4.png";
-import p5 from "../../images/userAvatar.png";
 
 export var sommeDepot = 0, nbdepot = 0, montantTransaction = 0, sommeAchat = 0, nbVente = 0, sommeVente = 0, nbAchat = 0, nbretrait = 0, nbtrans = 0, sommeTrans = 0, sommeRetrait = 0, nbUser = 0, sommeTranfer = 0, nbComptClassic = 0, nbComptPro = 0;
-
-var IfBlockedAccount = {
-  true: "Compte bloqué",
-  false: "Compte non bloqué"
-}
-
 
 
 const orderValueOverride = {
@@ -412,16 +385,12 @@ class Dashboard extends React.Component {
     splineArea: { ...splineArea },
     transactions: [],
     focus: false,
-    searchTerm : "",
   };
 
   transactions = getTransactions();
   trans = getFullTransactions();
   accounts = getFullAccounts();
   users = getUsers();
-
-  name = '';
-
 
   toggleFocus = () => {
     this.setState({ focus: !this.state.focus });
@@ -432,30 +401,6 @@ class Dashboard extends React.Component {
       notificationsOpen: !this.state.notificationsOpen,
     });
   }
-
-
-
-  // getNameByAccountId(accountId) {
-  //   if (accountId != 0 && accountId != null) {
-  //     if (localStorage.getItem('name' + accountId) == null) {
-  //       var promise = getFullNameByAccountId(accountId);
-  //       promise.then((value) => {
-  //         localStorage.setItem('name' + accountId, value.data.fullname);
-  //       });
-  //     }
-  //   }
-  // }
-
-  // getNameByUserId(userId) {
-  //   if (userId != 0 && userId != null) {
-  //     if (localStorage.getItem('name' + userId) == null) {
-  //       var promise = getFullNameByUserId(userId);
-  //       promise.then((value) => {
-  //         localStorage.setItem('name' + userId, value.data.fullname);
-  //       });
-  //     }
-  //   }
-  // }
 
   componentDidMount() {
     window.addEventListener("resize", this.forceUpdate.bind(this))
@@ -475,28 +420,10 @@ class Dashboard extends React.Component {
     
       nbUser = 0;
       respons && respons.map((user, index) => {
-        console.log("--------------nombre user ----------------------------");
-        console.log(user);
         nbUser++;
+        return nbUser;
       })
 
-//recherche pour les users
-
-  const inputHandler = (e) => {
-    this.setState({searchTerm: e.target.value});
-    console.log("---------------searchTermUsuer------------------");
-    console.log(this.e.target.value);
-  };
-
-  //full comptes fjshdn
-
-  this.trans.then((value) => {
-    // localStorage.setItem('transaction', JSON.stringify(value));
-    localStorage.setItem('transaction', JSON.stringify(value));
-    console.log("noms des envoyers dans res*****************************");
-                        console.log(value);
-  });
-  const res = JSON.parse(localStorage.getItem('transaction'));
 
     //operations sur les transactions
     this.transactions.then((value) => {
@@ -532,6 +459,8 @@ class Dashboard extends React.Component {
           nbVente++;
           sommeVente = parseFloat(sommeVente) + parseFloat(transaction.amount);
         }
+
+        return montantTransaction;
       })
     
 
@@ -548,13 +477,12 @@ class Dashboard extends React.Component {
 
       reponse && reponse.map((account, index) => {
 
-        if (TypeAccount[account.account_type_id] == "Classique") {
+        if (TypeAccount[account.account_type_id] === "Classique") {
           nbComptClassic++
         }
         else { nbComptPro++ }
+        return nbComptClassic;
       })
-
-
 
     return (
 
@@ -948,33 +876,7 @@ class Dashboard extends React.Component {
 
 
         <Row>
-          <Col xl={8}>
-            <Widget
-              title={
-                <Row>
-                  <Col xs={12} sm={5}>
-                    <p style={{ fontWeight: 700 }}>Transactions du jour</p>
-                  </Col>
-                  <Col xs={12} sm={7}>
-                    <div className="chart-legend" />
-                  </Col>
-                </Row>
-              }
-              customDropDown
-            >
-              <Row className={s.dailyLineChart}>
-                <Col sm={12}>
-                  <ApexChart
-                    className="sparkline-chart"
-                    series={this.state.splineArea.series}
-                    options={this.state.splineArea.options}
-                    type={"area"}
-                  />
-                </Col>
-              </Row>
-            </Widget>
-          </Col>
-          <Col xl={4}>
+          <Col xl={12}>
             <Widget
               title={<p style={{ fontWeight: 700 }}>Operations du jour</p>}
               customDropDown
@@ -1026,265 +928,7 @@ class Dashboard extends React.Component {
               </Row>
             </Widget>
           </Col>
-        </Row>
-
-        <Row>
-          <Col sm={12}>
-            <Widget
-              customDropDown
-              title={<p className={"fw-bold"}>Utilisateurs Intercash</p>}
-            >
-              <Table className={"table-hover table-bordered table-striped table-lg mt-lg mb-0"} borderless responsive>
-                <div style={{ height: '500px', overflow: 'scroll' }}>
-                <div className="main" style={{
-              display: "flex",
-              height: "100 vh",
-              width: "100%",
-              alignItems: "center",
-              flexDirection: "column",
-              rowGap: "100px",
-            }}>
-            </div>
-                  <thead>
-                    <tr>
-                      <th style={{ textAlign: "center" }} >
-                        No
-                      </th>
-                      <th style={{ textAlign: "center" }} >
-                        Nom
-                      </th>
-                      <th style={{ textAlign: "center" }} >
-                        Prénom (s)
-                      </th>
-                      <th style={{ textAlign: "center" }} >
-                        Numéro
-                      </th>
-                      <th style={{ textAlign: "center" }} >
-                        Pays
-                      </th>
-                      <th style={{ textAlign: "center" }} >
-                        Points de fidélités
-                      </th>
-                      <th style={{ textAlign: "center" }} >
-                        Authenticated
-                      </th>
-                      <th style={{ textAlign: "center" }} >
-                       Compte(s)
-                      </th>
-                    </tr>
-                  </thead>
-
-
-                  <tbody className="text-dark">
-                    {
-                      respons && respons.map((user, index) => {
-                        return (
-                          <tr key={index++}>
-                            <td scope='row'>{index}</td>
-                            <td style={{ textAlign: "center" }} >{user.last_name}</td>
-                            <td style={{ textAlign: "center" }} >{user.first_name}</td>
-                            <td style={{ textAlign: "center" }} >{user.phone}</td>
-                            <td style={{ textAlign: "center" }} >{user.country}</td>
-                            <td style={{ textAlign: "center" }} >{user.fidelity_points}</td>
-                            <td style={{ textAlign: "center" }} >{user.is_verified ? "Yes" : "No" }</td>
-                            <td style={{ textAlign: "center" }} >{(user.has_classical_account && user.has_professional_account)? " classique & Professionel":(user.has_classical_account)? "Compte classique":"Compte Professionel"}</td>
-                            {/* <td className={"pl-0 fw-normal"}>
-                              <Button onClick={() => 
-                                UnBlockedUser(user.id)} style={{fontSize:"20px", marginRight:"15px"}}><i class="text-success fa fa-check-circle"></i></Button>
-                              <Button onClick={() => 
-                                BlockedUser(user.id)} style={{fontSize:"20px"}}><i class="text-danger fa fa-times-circle"></i></Button>
-                            </td>   */}
-                          </tr>
-                        );
-                      })
-                    }
-                  </tbody>
-                </div>
-
-              </Table>
-            </Widget>
-          </Col>
-        </Row>
-
-
-        <Row>
-          <Col sm={12}>
-            <Widget
-              customDropDown
-              title={<p className={"fw-bold"}>Transactions</p>}
-            >
-              <Table className={"table-hover table-bordered table-striped table-lg mt-lg mb-0"} borderless responsive>
-                <div style={{ height: '500px', overflow: 'scroll' }}>
-                  <thead>
-                    <tr>
-                      <th style={{ textAlign: "center" }} >
-                        No
-                      </th>
-                      <th style={{ textAlign: "center" }} >
-                        ID
-                      </th>
-                      <th style={{ textAlign: "center" }} >
-                        Montant
-                      </th>
-                      <th style={{ textAlign: "center" }} >
-                        Comission
-                      </th>
-                      <th style={{ textAlign: "center" }} >
-                        Libellé
-                      </th>
-                      <th style={{ textAlign: "center" }} >
-                        Envoyeur
-                      </th>
-                      <th style={{ textAlign: "center" }} >
-                        Numéro Envoyeur
-                      </th>
-                      <th style={{ textAlign: "center" }} >
-                        Bénéficiaire
-                      </th>
-                      <th style={{ textAlign: "center" }} >
-                        Numéro Bénéficiaire
-                      </th>
-                      <th style={{ textAlign: "center" }}>
-                        Date transaction
-                      </th>
-                      <th style={{ textAlign: "center" }} >
-                        Heure transaction
-                      </th>
-                      <th style={{ textAlign: "center" }} >
-                        Type transaction
-                      </th>
-                    </tr>
-                  </thead>
-
-
-
-                  <tbody className="text-dark">
-
-                    {
-                      res && res.map((transac, index) => {
-                        return (
-                          <tr key={index++}>
-                            <td scope='row'>{index}</td>
-                            <td style={{ textAlign: "center" }} >{transac.id}</td>
-                            <td style={{ textAlign: "center" }} >{transac.amount}F CFA</td>
-                            <td style={{ textAlign: "center" }} >{transac.commission}F CFA</td>
-                            <td style={{ textAlign: "center" }} >{transac.description}</td>
-                            <td style={{ textAlign: "center" }} >{transac.sender_name}</td>
-                            <td style={{ textAlign: "center" }} >{transac.sender_phone}</td>
-                            <td style={{ textAlign: "center" }} >{transac.receiver_name}</td>
-                            <td style={{ textAlign: "center" }} >{transac.receiver_phone}</td>
-                            <td style={{ textAlign: "center" }} >{(transac.creation_date).slice(0,10)}</td>
-                            <td style={{ textAlign: "center" }} >{(transac.creation_date).slice(11,19)}</td>
-                            <td style={{ textAlign: "center" }} >{typeTransaction[transac.transaction_type_id]}</td>
-                          </tr>
-                        );
-                      })
-                    }
-                  </tbody>
-                </div>
-
-              </Table>
-            </Widget>
-          </Col>
-        </Row>
-
-
-        <Row>
-          <Col sm={12}>
-            <Widget
-              customDropDown
-              title={<p className={"fw-bold"}>Comptes</p>}
-            >
-              <Table className={"table-hover table-bordered table-striped table-lg mt-lg mb-0"} borderless responsive>
-                <div style={{ height: '500px' }}>
-                  <thead style={{ overflow: 'auto' }}>
-                    <tr>
-                      <th style={{ textAlign: "center" }}>
-                        No
-                      </th>
-                      <th style={{ textAlign: "center" }}>
-                        ID
-                      </th>
-                      <th style={{ textAlign: "center" }}>
-                        Utilisateur
-                      </th>
-                      <th kstyle={{ textAlign: "center" }}>
-                        Solde
-                      </th>
-                      <th style={{ textAlign: "center" }}>
-                        Commission
-                      </th>
-                      <th style={{ textAlign: "center" }}>
-                        Bonus
-                      </th>
-                      <th style={{ textAlign: "center" }}>
-                        Date Création
-                      </th>
-                      <th style={{ textAlign: "center" }}>
-                        Heure création
-                      </th>
-                      <th style={{ textAlign: "center" }}>
-                        Dernière opération
-                      </th>
-                      <th style={{ textAlign: "center" }}>
-                        Heure derniere opération
-                      </th>
-                      <th style={{ textAlign: "center" }}>
-                        Limite de transaction
-                      </th>
-                      
-                      <th style={{ textAlign: "center" }}>
-                        Type de compte
-                      </th>
-                      <th key={12} scope="col" className={"text-center pl-0"}>
-                      Statut
-                    </th>
-                      <th key={12} scope="col" className={"text-center pl-0"}>
-                      Action
-                    </th>
-                    </tr>
-                  </thead>
-                  <tbody className="text-dark" style={{ overflow: 'auto' }}>
-
-                    {
-                      reponse && reponse.map((account, index) => {
-                        // this.getNameByUserId(account.user_id);
-                        return (
-                          <tr key={index++}>
-                            <td scope='row'>{index}</td>
-                            <td style={{ textAlign: "center" }}>{(account.id)}</td>
-                            <td style={{ textAlign: "center" }}>{localStorage.getItem('name' + account.user_id) || 'Unknow'}</td>
-                            <td style={{ textAlign: "center" }}>{account.amount}F CFA</td>
-                            <td style={{ textAlign: "center" }}>{account.commission}F CFA</td>
-                            <td style={{ textAlign: "center" }}>{account.bonus}F CFA</td>
-                            <td style={{ textAlign: "center" }}>{(account.creation_date).slice(0, 10)}</td>
-                            <td style={{ textAlign: "center" }}>{(account.creation_date).slice(11, 18)}</td>
-                            <td style={{ textAlign: "center" }}>{(account.last_update).slice(0, 10)}</td>
-                            <td style={{ textAlign: "center" }}>{(account.creation_date).slice(11, 18)}</td>
-                            <td style={{ textAlign: "center" }}>{account.stop_amount}F CFA</td>
-                            <td style={{ textAlign: "center" }}>{account.account_type_name}</td>
-                            <td style={{ textAlign: "center" }}>{IfBlockedAccount[account.is_locked]}</td>
-                            <td className={"pl-0 fw-normal"}>
-                            {
-                              account.is_locked ?
-                                <Button if={!account.is_locked} onClick={() => 
-                                  UnBlockedAccount(account.id)} style={{fontSize:"20px", marginRight:"15px"}}><i class="text-success fa fa-check-circle"></i></Button>
-                              : 
-                                <Button onClick={() => 
-                                  BlockedAccount(account.id)} style={{fontSize:"20px"}}><i class="text-danger fa fa-times-circle"></i></Button>
-                            }
-                           
-                            </td>  
-                          </tr>
-                        );
-                      })
-                    }
-                  </tbody>
-                </div>
-              </Table>
-            </Widget>
-          </Col>
-        </Row>
+        </Row>  
         {/* <Row>
           <Col sm={12}>
             <Widget

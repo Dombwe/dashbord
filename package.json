@@ -13,6 +13,7 @@
     "not ie <= 11",
     "not op_mini all"
   ],
+  "homepage": "https://Intercash_Dashboard.com",
   "eslintConfig": {
     "extends": "react-app"
   },
@@ -159,4 +160,5 @@
     "webpack-raphael": "2.1.4",
     "workbox-webpack-plugin": "4.3.1"
   }
+  
 }

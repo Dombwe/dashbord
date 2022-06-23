@@ -5,7 +5,8 @@ import s from './Partners.module.scss';
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { createPartners } from '../../../controller/Partners';
-import {Link} from "react-router-dom";
+import {Link, useHistory } from "react-router-dom";
+import {getPartners} from '../../../controller/Partners';
 
 const initialState = {
   name: "",
@@ -17,8 +18,11 @@ const initialState = {
 function AddPartners() {
 
   const [state, setState] = useState(initialState);
+  const [promis, setPromis] = useState();
 
   const {name, logo} = state;
+
+  const history = useHistory();
 
   const handleInputChange = (e) => {
     let { name, value } = e.target;
@@ -29,16 +33,26 @@ function AddPartners() {
   };
 
 
+  const reloading = () =>{
+    // console.log("*********localStorage before********************");
+    // console.log(localStorage.getItem('Partners'));
+    // const promise = getPartners();
+    // promise.then((Partners) => {
+    //   localStorage.setItem('Partners', JSON.stringify(Partners.data));
+    // });
+    // console.log("*********localStorage after********************");
+    // console.log(localStorage.getItem('Partners'));
+  }
+
   const handleSubmit = (e) => {
     if (!name ) {
       toast.error("Please provide value into each input field");
     }
-    else {
-      toast.success("User added successfuly");
+    else {  
       createPartners(state);
-
+      setPromis(getPartners());
     }
-
+      reloading();
   };
 
   return (
@@ -50,7 +64,7 @@ function AddPartners() {
         <Col sm={10} className="text-align:right"></Col>
         <Col sm={2} className="text-align:right">
           <Link to = "/app/administration/Partners/list">
-          <Button  className="text-warning"  style={{fontSize:"20px", marginBottom:"10px", background:"black"}}> Partners list </Button>
+          <Button onClick={()=> reloading()}  className="text-warning"  style={{fontSize:"20px", marginBottom:"10px", background:"black"}}> Partners list </Button>
           </Link>
         </Col>
       </Row>
@@ -143,7 +157,7 @@ function AddPartners() {
               boxShadow: "1px 1px 1px #D83F3D",
               cursor: "pointer",
             }}
-            type="submit" refresh="true" value={"Add Partner "} />
+            type="submit"  refresh="true" value={"Add Partner "} />
         </form>
       </div>
     </div>

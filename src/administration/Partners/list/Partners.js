@@ -1,96 +1,94 @@
-import React, {useState,useRef,useEffect} from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Row, Col, Table
 } from 'reactstrap';
-import { Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "@progress/kendo-react-buttons";
-import {getPartners} from '../../../controller/Partners';
+import { getPartners } from '../../../controller/Partners';
 import Widget from "../../../components/Widget/Widget";
 import 'react-toastify/dist/ReactToastify.css';
 import s from './Partners.module.scss';
-import  {deletePartner}  from '../../../controller/Partners';
+import { deletePartner } from '../../../controller/Partners';
 import TextField from "@mui/material/TextField";
-import { PDFExport, savePDF } from "@progress/kendo-react-pdf";
+import { PDFExport } from "@progress/kendo-react-pdf";
 import { ExcelExport, ExcelExportColumn } from '@progress/kendo-react-excel-export';
 import { useHistory } from 'react-router'
 
 
 
-function ListPartners () {
-  
+function ListPartners() {
+
+
+
+  const history = useHistory();
+
+  useEffect(() => {
+    getPartners();
+  }, []);
+
+  const promise = getPartners();
+  const [searchTerm, setSearchTerm] = useState('');
+  const pdfExportComponent = useRef(null);
+  // const contentArea = useRef(null);
+  const _exporter = useRef(null);
+
+  const reloading = () => {
+    setTimeout(() => {
+      getPartners();
+      history.push('/app/administration/Partners/list');
+      window.location.reload();
+
+    }, 1000);
+  }
+
   const onDeletePartner = async (id) => {
     deletePartner(id);
-    reloading();
-};
- 
-const history = useHistory()
-
-useEffect(() => {
-  getPartners();
-}, []);
-
- const promise = getPartners();
- const [searchTerm, setSearchTerm] = useState('');
- const pdfExportComponent = useRef(null);
-  // const contentArea = useRef(null);
- const _exporter = useRef(null);
-
- const reloading = () =>{
-  setTimeout(()=>{
-    
     getPartners();
-    history.push('../../administration/Partners/list/Partners');
+    reloading();
+  };
 
-    // window.location.reload();
-  },1000);
-}
+  const inputHandler = (e) => {
 
- const inputHandler = (e) => {
+    var term = e.target.value;
+    setSearchTerm(term);
+  };
 
-   var term = e.target.value;
-   setSearchTerm(term);
- };
+  promise.then((Partners) => {
+    localStorage.setItem('Partners', JSON.stringify(Partners.data));
+  });
+  const Partners = JSON.parse(localStorage.getItem('Partners'));
 
-    promise.then((Partners) => {
-      localStorage.setItem('Partners',JSON.stringify(Partners.data));
-    });
-    const Partners = JSON.parse(localStorage.getItem('Partners'));
+  const handleExportWithComponent = (event) => {
+    pdfExportComponent.current.save();
 
-    const handleExportWithComponent = (event) => {
-      pdfExportComponent.current.save();
-  
-    }
-  
-        const exportExcel = (event) => {
-                _exporter.current.save();      
-  
-      }
-  
+  }
 
-    return (
-        <div className={s.root}>
-          {/* <meta http-equiv="refresh" content="2"></meta> */}
-          <Row>
-            <Col sm={10} className="text-align:right"></Col>
-            <Col sm={2} className="text-align:right">
-            <Link to="/app/administration/Partners/addPartners" refresh="true">
-            <Button  className="text-warning"  
-            // o
-             style={{fontSize:"20px", marginBottom:"10px", background:"black"}}> Créer <i class="fa fa-plus-circle"></i></Button>
-            </Link>
-            </Col>
-          </Row>
-          <Row>
-            <Col sm={12}>
-              <Widget
-                // customDropDown
-                title={<p className={"fw-bold text-warning"}>Les Partenaires d'intercash</p>}
-              >
-                <div className='button-area'>
-              {/* <Button style={{ backgroundColor: 'gray' }} >
-                <CSVLink style={{ color: 'black' }} filename='Report.csv' headers={Headers} data={Stor}>CSV Export </CSVLink>
-              </Button> */}
-              <Button style={{ backgroundColor: 'gray' }}  onClick={exportExcel}>Excel Export</Button>
+  const exportExcel = (event) => {
+    _exporter.current.save();
+
+  }
+
+
+  return (
+    <div className={s.root}>
+      {/* <meta http-equiv="refresh" content="2"></meta> */}
+      <Row>
+        <Col sm={10} className="text-align:right"></Col>
+        <Col sm={2} className="text-align:right">
+          <Link to="/app/administration/Partners/addPartners" refresh="true">
+            <Button className="text-warning"
+              // o
+              style={{ fontSize: "20px", marginBottom: "10px", background: "black" }}> Créer <i class="fa fa-plus-circle"></i></Button>
+          </Link>
+        </Col>
+      </Row>
+      <Row>
+        <Col sm={12}>
+          <Widget
+            title={<p className={"fw-bold text-warning"}>Les Partenaires d'intercash</p>}
+          >
+            <div className='button-area'>
+              <Button style={{ backgroundColor: 'gray' }} onClick={exportExcel}>Excel Export</Button>
 
               <Button primary={true} style={{ backgroundColor: 'gray' }} onClick={handleExportWithComponent}>PDF Export</Button>
             </div>
@@ -119,32 +117,31 @@ useEffect(() => {
                     <searchIcon />
                   </div>
                 </div>
-                </div>
               </div>
-              <PDFExport ref={pdfExportComponent} paperSize='auto'>
-            <ExcelExport ref ={_exporter}
-            data={Partners}
-            fileName="Partenaires.xlsx"
-             >
-        <ExcelExportColumn
-          field="id"
-          title="ID"
-          locked={true}
-          width={200}
-        />
-        <ExcelExportColumn
-          field="name"
-          title="Nom"
-          width={350}
-        />
-        <ExcelExportColumn
-          field="logo"
-          title="Logo"
-          width={350}
-        />
-       
-        <ExcelExportColumn field="UnitsOnOrder" title="Units on Order" />
-        <ExcelExportColumn field="UnitsInStock" title="Units in Stock" />
+            </div>
+            <PDFExport ref={pdfExportComponent} paperSize='auto'>
+              <ExcelExport ref={_exporter}
+                data={Partners}
+                fileName="Partenaires.xlsx"
+              >
+                <ExcelExportColumn
+                  field="id"
+                  title="ID"
+                  locked={true}
+                  width={200}
+                />
+                <ExcelExportColumn
+                  field="name"
+                  title="Nom"
+                  width={350}
+                />
+                <ExcelExportColumn
+                  field="logo"
+                  title="Logo"
+                  width={350}
+                />
+                <ExcelExportColumn field="UnitsOnOrder" title="Units on Order" />
+                <ExcelExportColumn field="UnitsInStock" title="Units in Stock" />
                 <Table className={"table-hover table-bordered table-striped table-lg mt-lg mb-0"} borderless responsive>
                   <thead>
                     <tr>
@@ -152,7 +149,7 @@ useEffect(() => {
                         #
                       </th>
                       <th key={1} scope="col" className={"text-center pl-0"}>
-                       id
+                        id
                       </th>
                       <th key={2} scope="col" className={"text-center pl-0"}>
                         Name
@@ -167,8 +164,8 @@ useEffect(() => {
                   </thead>
                   <tbody className="text-dark">
                     {
-                      Partners.filter(Partners => searchTerm === "" || Partners.name.toLowerCase() === searchTerm.toLowerCase()  || Partners.name.toLowerCase().includes(searchTerm.toLowerCase())).map((Partner, index) => { 
-                        return ( 
+                      Partners.filter(Partners => searchTerm === "" || Partners.name.toLowerCase() === searchTerm.toLowerCase() || Partners.name.toLowerCase().includes(searchTerm.toLowerCase())).map((Partner, index) => {
+                        return (
                           <tr key={index++}>
 
                             <td scope='row'>{index}</td>
@@ -176,25 +173,24 @@ useEffect(() => {
                             <td className={"pl-0 fw-normal text-center"}>{Partner.name}</td>
                             <td className={"pl-0 fw-normal text-center"}>{Partner.logo}</td>
                             <td className={"pl-0 fw-normal text-center"}>
-                            <Link to={`add/${Partner.id}`} style={{fontSize:"20px", marginRight:"15px"}}><i class="text-success fa fa-edit"></i></Link>
-                            <button onClick={() => onDeletePartner(Partner.id)} style={{fontSize:"20px"}}><i class="text-danger fa fa-trash-o"></i></button>
-                             
-                            </td>                          
+                              <button onClick={() => onDeletePartner(Partner.id)} style={{ fontSize: "20px" }}><i class="text-danger fa fa-trash-o"></i> Supprimer</button>
+                            </td>
                           </tr>
                         );
                       })
                     }
                   </tbody>
                 </Table>
-                </ExcelExport>
-                </PDFExport>
-              </Widget>
-            </Col>
-          </Row>
-      
-        </div>
-    );
-  
+              </ExcelExport>
+            </PDFExport>
+          </Widget>
+        </Col>
+      </Row>
+
+    </div>
+
+  );
+
 }
 
 export default ListPartners;

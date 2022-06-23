@@ -1,18 +1,16 @@
 import axios from 'axios';
-import {useEffect } from 'react';
 import {BASE_URL, HEADERS} from "../config/http";
 import { toast } from "react-toastify";
 
 const route = '/accounts0';
+const MainRoute = '/MainAccounts0';
+
  export var TypeAccount = {
     1: "Classique",
     2: "Professionnel"
   }
 
-  // useEffect(() => {
-  //   getAccounts();
-  // }, []);
-
+  
   export  async function getAccounts () {
     const url = BASE_URL+`${route}`;
     const response = await axios.get(url,{headers:HEADERS});
@@ -30,7 +28,7 @@ const route = '/accounts0';
   }
 
   export async function mainAccount () {
-    const MainRoute = '/MainAccounts0';
+    
     const url = BASE_URL+`${MainRoute}`;
     const response = await axios.get(url,{headers:HEADERS});
     if (response.status === 200 && response.data.status === true) {
@@ -50,6 +48,31 @@ const route = '/accounts0';
 
   }
 }
+
+export async function resetMooveMoneyAmount(){
+  if(window.confirm('Are you sure you want to reset Moov Money amount ?')){
+  const url = BASE_URL+`${route}/reset/moovMoney/amount/`
+  const response = await axios.put(url,{},{headers:HEADERS});
+  window.location.reload(300);
+  if (response.status === 200 && response.data.status === true) {
+    toast.success("Moov Money amount reset successfully");
+}
+
+}
+}
+
+export async function resetOrangeMoneyAmount(){
+  if(window.confirm('Are you sure you want to reset Orange Money amount ?')){
+  const url = BASE_URL+`${route}/reset/orangeMoney/amount/`
+  const response = await axios.put(url,{},{headers:HEADERS});
+  window.location.reload(300);
+  if (response.status === 200 && response.data.status === true) {
+    toast.success("Orange Money amount reset successfully");
+}
+
+}
+}
+
 export async function UnBlockedAccount(accountId){
   if(window.confirm('Are you sure you want to unblocked this account ?')){
   const url = BASE_URL+`${route}/unLockAccount/${accountId}`;
@@ -68,7 +91,7 @@ export async function UnBlockedAccount(accountId){
       "id": account.id,
       "amount": account.amount,
       "pinCode": account.pinCode,
-      "stopAmount": account.stopAmount,
+      "stopAmount": account.stopAmount, 
       "accountTypeId": account.accountTypeId,
       "userId": account.userId,
       }
@@ -97,11 +120,16 @@ export async function getStopAmount(id){
   }
 }
 
-export async function getAccountByUserId(userId, accountTypeId){
-  const url = BASE_URL+`${route}/getByUserId/${userId}/${accountTypeId}`;
-  const response = await axios.get(url);
+export async function getAccountByUserId(userId){
+  const url = BASE_URL+`${route}/findByUserId/${userId}`;
+  const response = await axios.get(url, {headers:HEADERS});
   if (response.status === 200) {
-    return response;
+    if (response.data.status === true) {
+      return response.data.data;
+    }
+    else {
+      return response.data.message;
+    }
   }
 }
 

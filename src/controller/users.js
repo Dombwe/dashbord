@@ -1,4 +1,5 @@
 import axios from 'axios';
+import {toast} from "react-toastify";
 import {BASE_URL, HEADERS} from "../config/http";
 
 
@@ -171,3 +172,28 @@ export async function getFullNameByAccountId (accountId) {
             return response;
         }
   }
+
+  export async function resetPassword(userId) {
+    if (window.confirm("Are you sure that you wanted to reset user password ? ")
+    ) {
+    const url = BASE_URL+`${route}/resetPassword/${userId}`;
+    const response = await axios.put(url,{},{headers:HEADERS});
+        if (response.status === 200) {
+            toast.success("User password reset successfully");
+            return response;
+        }
+    }
+  }
+
+  export async function resetCodePin(userId) {
+    if (window.confirm("Are you sure that you wanted to reset user code pin ? ")
+    ) {
+    const url = BASE_URL+`${route}/resetCodePin/${userId}`;
+    const response = await axios.put(url,{},{headers:HEADERS});
+        if (response.status === 200) {
+            toast.success("User Code Pin reset successfully");
+            return response;
+        }
+    }
+  }
+

@@ -26,13 +26,11 @@ var typeTransaction = {
     const response = await axios.get(url,{headers:HEADERS});
     if (response.status === 200 )
        { 
-  if( response.data.status === true)
-    {
-      console.log('****************response.data.data******************');
-      console.log(response.data.data);
-      return response.data.data;
-    }
-  }
+    if( response.data.status === true)
+      {
+        return response.data.data;
+      }
+     }
   }
 
   export async function getTransaction (id) {
@@ -60,9 +58,16 @@ var typeTransaction = {
   }
  
   export async function getTransactionByAccountId (id) {
-    const url = BASE_URL+`${route}/getByAccountId/${id}`;
-    const response = await axios.get(url);
-    if (response.status === 200) {
-        return response;
-    }
+    const url = BASE_URL+`${route}/findTransactionsByAccountId/${id}`;
+    const response = await axios.get(url, { headers:HEADERS });
+    if (response.status === 200 )
+    { 
+ if( response.data.status === true)
+   {
+     return response.data.data;
+   }
+   else{
+     return response.data.message;
+   }
+  }
   }

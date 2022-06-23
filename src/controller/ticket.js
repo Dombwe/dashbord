@@ -65,12 +65,16 @@ const route = "/tickets0";
     }
   }
 
-  export async function getTicketByEventId(eventId) {
-    const url = BASE_URL+`${route}/getTicketByEventId/${eventId}`;
-    const response = await axios.get(url);
+  export  async function getTicketByEventId(eventId) {
+    const url = BASE_URL+`${route}/findAllTicketsByEventId/${eventId}`;
+    const response = await axios.get(url,{headers:HEADERS});
     if (response.status === 200) {
-        return response;
-    }
+      if (response.data.status === true) {
+          return response.data.data;
+      } else {
+          return response.data.message;
+      }
+  }
   }
 
   export async function getTicketByAccountId(accountId) {

@@ -57,11 +57,9 @@ export function loginUser(creds)  {
             const result = await login(creds.username, creds.password);
 
             if (result === true) {
-                console.log('Ok');
                 localStorage.setItem('authenticated', true); 
                 window.location.reload(false);
             }  else {
-                console.log('!Ok');
                 dispatch(loginError('Identifiants incorrects! Veuillez reesayer..'));
             }
                         

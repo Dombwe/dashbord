@@ -13,12 +13,13 @@ import { getFullTransactions } from "../../controller/transactions";
 import { getTransactions } from "../../controller/transactions";
 import { conditionallyUpdateScrollbar } from 'reactstrap/lib/utils';
 import { tabUnstyledClasses } from '@mui/base';
+import { resetMooveMoneyAmount, resetOrangeMoneyAmount } from "../../controller/accounts";
 
 const initialState = {
     choix: "all",
 };
 export var comis;
-export var commissionJour = 0, commissionMois = 0, commissionSemaine = 0, commissionAn = 0;
+let commissionJour = 0, commissionMois = 0, commissionSemaine = 0, commissionAn = 0, depotOrangeMoney = 0, depotMoovMoney = 0, retraitOrangeMoney = 0, retraitMoovMoney = 0;
 
 
 
@@ -30,16 +31,37 @@ const isToday = (date) => {
 
 const isWeek = (date) => {
 
-        var todayDate = new Date(), weekDate = new Date();
-        weekDate.setTime(todayDate.getTime() - (7 * 24 * 3600000));
-        if (parseInt(new Date(date).getDate()) === parseInt(weekDate.getDate()) && parseInt(new Date(date).getMonth()) === parseInt(weekDate.getMonth()) && parseInt(new Date(weekDate).getFullYear()) === parseInt(new Date(date).getFullYear())) 
-        { 
-            return true
-         } else {return false}
+    var todayDate = new Date(), weekDate = new Date();
+    weekDate.setTime(todayDate.getTime() - (7 * 24 * 3600000));
+    if (parseInt(new Date(date).getDate()) === parseInt(weekDate.getDate()) && parseInt(new Date(date).getMonth()) === parseInt(weekDate.getMonth()) && parseInt(new Date(weekDate).getFullYear()) === parseInt(new Date(date).getFullYear())) {
+        return true
+    } else { return false }
 
 }
+const  comprisDate = (startingDate, endingDate) =>{
 
+    var status = new Boolean(false);
+  
+    const now = Date.now();
+    var startingDate = new Date(startingDate);
+    var endingDate = new Date(endingDate);
+  
+    // if((_startingDate!.compareTo(now) < 0 && _endingDate!.compareTo(now) > 0) || (_startingDate.isToday || _endingDate!.isToday)) 
+    // {
+    //   status = true;     
+    // }
+    return status;
+  }
 
+  const user = {
+    'token': localStorage.getItem('token'),
+    'name': localStorage.getItem('name'),
+    'username': localStorage.getItem('username'),
+    'contact': localStorage.getItem('contact'),
+    'level': localStorage.getItem('level'),
+    'authenticated': localStorage.getItem('authenticated'),
+  };
+  
 
 function Comission() {
     const [state, setState] = useState(initialState);
@@ -54,12 +76,43 @@ function Comission() {
             [name]: value,
         });
     }
-    
+
+     
+      
     promise.then((value) => {
         localStorage.setItem('commissions', JSON.stringify(value));
 
     });
     const comme = JSON.parse(localStorage.getItem('commissions'));
+
+    promis.then((value) => {
+        localStorage.setItem('transactions', JSON.stringify(value));
+    })
+    const transactio = JSON.parse(localStorage.getItem('transactions'));
+
+    // depotMoovMoney = 0.0;
+    // depotOrangeMoney = 0.0;
+    // retraitMoovMoney = 0.0;
+    // retraitOrangeMoney = 0.0;
+
+    transactio && transactio.map((trans) => {
+
+        if (trans.is_orange_deposit) {
+            depotOrangeMoney = parseFloat(depotOrangeMoney) + parseFloat(trans.amount);
+        } else if (trans.is_moov_deposit) {
+            depotMoovMoney = parseFloat(depotMoovMoney) + parseFloat(trans.amount);
+        } else if (trans.is_orange_withdrawal) {
+            retraitOrangeMoney = parseFloat(retraitOrangeMoney) + parseFloat(trans.amount);
+        } else if (trans.is_moov_withdrawal) {
+            retraitMoovMoney = parseFloat(retraitMoovMoney) + parseFloat(trans.amount);
+        }
+        console.log("*******************les statistiques********************");
+        console.log(depotMoovMoney);
+        console.log(depotOrangeMoney);
+        console.log(retraitMoovMoney);
+        console.log(retraitOrangeMoney);
+
+    })
 
     promis.then((value) => {
         localStorage.setItem('transactions', JSON.stringify(value));
@@ -71,13 +124,19 @@ function Comission() {
     commissionSemaine = 0.0
     commissionMois = 0.0;
     commissionAn = 0.0;
-  
+    // depotMoovMoney = 0.0;
+    // depotOrangeMoney = 0.0;
+    // retraitMoovMoney = 0.0;
+    // retraitOrangeMoney = 0.0;
+
+
+
     transaction && transaction.map((trans, index) => {
         // eslint-disable-next-line default-case
         switch (choix) {
             case "jour":
-        
-                if(isToday(trans.creation_date)) {
+
+                if (isToday(trans.creation_date)) {
                     commissionJour += trans.commission;
                 }
 
@@ -86,8 +145,7 @@ function Comission() {
             case "semaine":
                 var todayDate = new Date(), weekDate = new Date();
                 weekDate.setTime(todayDate.getTime() - (7 * 24 * 3600000));
-                if (parseInt(new Date(trans.creation_date).getDate()) === parseInt(weekDate.getDate()) && parseInt(new Date(trans.creation_date).getMonth()) === parseInt(weekDate.getMonth()) && parseInt(new Date(trans.creation_date).getFullYear()) === parseInt(new Date(trans.creation_date).getFullYear())) 
-                { commissionSemaine += trans.commission; }
+                if (parseInt(new Date(trans.creation_date).getDate()) === parseInt(weekDate.getDate()) && parseInt(new Date(trans.creation_date).getMonth()) === parseInt(weekDate.getMonth()) && parseInt(new Date(trans.creation_date).getFullYear()) === parseInt(new Date(trans.creation_date).getFullYear())) { commissionSemaine += trans.commission; }
                 break;
 
             case "mois":
@@ -95,23 +153,23 @@ function Comission() {
                 var nowYear = new Date().getFullYear();
                 var transMonth = new Date(trans.creation_date).getMonth();
                 var transYear = new Date(trans.creation_date).getFullYear()
-                if (nowMonth === transMonth && nowYear === transYear)
-                 { commissionMois += trans.commission; }
+                if (nowMonth === transMonth && nowYear === transYear) { commissionMois += trans.commission; }
 
                 break;
-           
-                case "an":
+
+            case "an":
                 var transYear = new Date(trans.creation_date).getFullYear();
                 var todayYear = new Date().getFullYear();
-                if (parseInt(transYear) === parseInt(todayYear))
-                 { commissionAn += trans.commission; }
+                if (parseInt(transYear) === parseInt(todayYear)) { commissionAn += trans.commission; }
 
                 break;
 
-        
+
         }
         comis = comis + trans.commission;
     })
+
+
     return (
         <div className={s.root}>
             <select
@@ -164,20 +222,20 @@ function Comission() {
                         <Table className={"table-hover table-bordered table-striped table-lg mt-lg mb-0"} borderless responsive>
                             <thead>
                                 <tr>
-                                    <th key={0} scope="col" className={"text-center pl-0"}>
-                                        Index
+                                <th key={1} scope="col" className={"text-center pl-0"}>
+                                        Partenaires
                                     </th>
                                     <th key={1} scope="col" className={"text-center pl-0"}>
-                                        Commission INTERCASH
+                                        Rétraits
                                     </th>
                                     <th key={2} scope="col" className={"text-center pl-0"}>
-                                        Solde Orange Money
+                                        Dépots
                                     </th>
                                     <th key={3} scope="col" className={"text-center pl-0"}>
-                                        Solde Moov Money
+                                       Total
                                     </th>
                                     <th key={3} scope="col" className={"text-center pl-0"}>
-                                        solde Paypal
+                                        Commandes
                                     </th>
                                 </tr>
                             </thead>
@@ -187,20 +245,62 @@ function Comission() {
                                         return (
                                             <tr key={index++}>
 
-                                                <td scope='row'>{index}</td>
-                                                <td className={"pl-0 fw-normal text-center"}>{com.amount} F CFA</td>
+                                                
+                                                <td className={"pl-0 fw-normal text-center"}><strong><em>Orange Money</em></strong></td>
+                                                <td className={"pl-0 fw-normal text-center"}>{retraitOrangeMoney} F CFA</td>
+                                                <td className={"pl-0 fw-normal text-center"}>{depotOrangeMoney} F CFA</td>
                                                 <td className={"pl-0 fw-normal text-center"}>{com.orange_money_amount} F CFA</td>
-                                                <td className={"pl-0 fw-normal text-center"}>{com.moov_money_amount} F CFA</td>
-                                                <td className={"pl-0 fw-normal text-center"}>{com.paypal_amount} F CFA</td>
+                                                <td className={"pl-0 fw-normal text-center"}>
+                                                <Button  style={{ fontSize: "20px", marginRight: "15px" }}><i class="text-success fa fa-plus"></i> <em>Increase</em></Button>
+
+                                                <Button  style={{ fontSize: "20px", marginRight: "15px" }}><i class="text-success fa fa-minus"></i> <em>Decrease</em> </Button>
+                                                </td>
+                                               
                                             </tr>
+
                                         );
                                     })
+                                    
                                 }
                             </tbody>
+
+
+                            <tbody className="text-dark">
+                                {
+                                    comme.map((com, index) => {
+                                        return (
+                                            <tr key={index++}>
+
+                                                
+                                                <td className={"pl-0 fw-normal text-center"}><strong><em>Moov Money</em></strong></td>
+                                                <td className={"pl-0 fw-normal text-center"}>{retraitMoovMoney} F CFA</td>
+                                                <td className={"pl-0 fw-normal text-center"}>{depotMoovMoney} F CFA</td>
+                                                <td className={"pl-0 fw-normal text-center"}>{com.moov_money_amount} F CFA</td>
+                                                <td className={"pl-0 fw-normal text-center"}>
+                                                <Button  style={{ fontSize: "20px", marginRight: "15px" }}><i class="text-success fa fa-plus"></i> <em>Increase</em></Button>
+                                                <Button  style={{ fontSize: "20px", marginRight: "15px" }}><i class="text-success fa fa-minus"></i> <em>Decrease</em> </Button>
+                                                </td>
+                                               
+
+
+                                            </tr>
+
+                                        );
+                                    })
+                                    
+                                }
+                            </tbody>
+
                         </Table>
+
                     </Widget>
                 </Col>
-                <Col xl={4}>
+               
+            </Row>
+            
+            <Row>
+                
+                <Col xl={6} style={{ marginLeft: "250px"}}>
                     <Widget
                         title={<p style={{ fontWeight: 700 }}>Montant de la commission d'INTERCASH</p>}
                     >
@@ -209,12 +309,13 @@ function Comission() {
 
                                 <h6 className={"fw-semi-bold mb-0"}>
                                     {
-                                        choix === "all" ? comis 
-                                        : choix === "jour"  ? commissionJour
-                                        : choix === "semaine" ? commissionSemaine
-                                        : choix === "mois" ? commissionMois
-                                        : commissionAn
+                                        choix === "all" ? comis
+                                            : choix === "jour" ? commissionJour
+                                                : choix === "semaine" ? commissionSemaine
+                                                    : choix === "mois" ? commissionMois
+                                                        : commissionAn
                                     } F CFA
+                                    : 
                                 </h6>
 
 
@@ -225,7 +326,6 @@ function Comission() {
                     </Widget>
                 </Col>
             </Row>
-
         </div>
     );
 

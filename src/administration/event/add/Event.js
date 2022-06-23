@@ -33,7 +33,7 @@ function AddEvent() {
 
  var [state, setState] = useState(initialState);
 
-  const { name, organizer, limit_registration, country, city, district, location, starting_date, ending_date, description, phone, category, account_id, publishing_start_date, publishing_end_date, username, password,locality, activity_are} = state;
+  const { name, organizer, limit_registration, country, city, district, location, starting_date, ending_date, description, phone, category, account_id, publishing_start_date, publishing_end_date} = state;
   var user_id;
   
   const handleInputChange = (e) => {

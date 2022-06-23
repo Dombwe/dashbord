@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Row, Col, Button} from "reactstrap";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import s from "./ticket.module.scss";
 import { toast } from "react-toastify";
 import {createTicket}  from "../../controller/ticket";
@@ -17,10 +17,21 @@ const initialState = {
 }
 
 
+
 function AddEvent() {
 
  var [state, setState] = useState(initialState);
+ const history = useHistory()
+ const url2 = history.location.pathname;
+ var bon = "";
 
+ for (var i = 0; i < url2.length; i++) {
+
+     if (url2[i] === "=")
+         bon = i;
+
+ }
+ const id = parseInt(url2.slice(bon + 1));
   const {
     price,
     commission,
@@ -44,14 +55,13 @@ function AddEvent() {
   console.log(state);
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-
-    if (!price || !category ||  !total_ticket || !event_id || !account_id)  {
+    if (!price || !category ||  !total_ticket || !account_id)  {
       toast.error("Please provide value into each input field");
     }
     else {
         state.movie_id = 0;
         state.is_valid = true;
+        state.event_id = id;
         createTicket(state);
     }
   };
@@ -62,7 +72,7 @@ function AddEvent() {
       <Row>
         <Col sm={10} className="text-align:right"></Col>
         <Col sm={2} className="text-align:right">
-          <Link to="/app/administration/Tickets/tickets">
+          <Link to={`/app/administration/event/list/ticketsEvent/id=${id}`}>
             <Button className="text-warning" style={{ fontSize: "20px", marginBottom: "10px", background: "black" }}>Ticket list </Button>
           </Link>
         </Col>
@@ -147,7 +157,7 @@ function AddEvent() {
             </td>
           </tr>
 
-          <tr >
+          {/* <tr >
             <td>
               <label htmlFor="event_id"
                 style={{
@@ -175,7 +185,7 @@ function AddEvent() {
 
               />
             </td>
-          </tr>
+          </tr> */}
 
          
 

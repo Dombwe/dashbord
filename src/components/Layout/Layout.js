@@ -30,7 +30,7 @@ import Charts from "../../pages/charts";
 import AddAdministratorPage from "../../administration/administrator/add/Administrator";
 import ListAdministratorPage from "../../administration/administrator/list/Administrator";
 import ViewAdmin from "../../administration/administrator/list/ViewAdmin";
-
+import Etats from "../../administration/Etats/Etats";
 import AddEventPage from "../../administration/event/add/Event";
 import ListEventPage from "../../administration/event/list/Event";
 import Partners from "../../administration/Partners/list/Partners";
@@ -42,6 +42,9 @@ import comission from "../../administration/Comissions/comission"
 import tickets from "../../administration/Tickets/tickets";
 import addTicket from "../../administration/Tickets/addTicket"
 import ViewEvent from "../../administration/event/list/ViewEvent"
+import userAccounts from "../../pages/dashboard/userAccounts"
+import accountActivity from "../../pages/dashboard/accountActivity"
+import ticketsEvent from "../../administration/event/list/ticketsEvent";
 
 
 
@@ -155,17 +158,21 @@ class Layout extends React.Component {
                     <Route path={"/app/administration/Tickets/tickets"}  component={tickets}/>
                     <Route path={"/app/administration/Tickets/addTicket"}  component={addTicket}/>
                     <Route path={"/app/administration/event/list/ViewEvent"}  component={ViewEvent}/>
+                    <Route path={"/app/administration/administrator/list/ViewAdmin"} component={ViewAdmin} />
+                    <Route path={"/app/administration/event/list/ticketsEvent"} component={ticketsEvent}/>
+                    <Route path={"/app/administration/Etats/Etats"} component={Etats} />
+                    
 
 
                     <Route path={"/app/administration/event/add"} component={AddEventPage} />
                     <Route path={"/app/administration/event/list"} component={ListEventPage} />
+                    <Route path={"/App/pages/dashboard/userAccounts"} component={userAccounts}/>
+                    <Route path={"/App/pages/dashboard/accountActivity"} component={accountActivity}/>
 
                     {/* <Route path={"/app/administration/administrator"} component={Administrator} /> */}
                     <Route path={"/app/administration/administrator/add"} component={AddAdministratorPage} />
                     <Route path={"/app/administration/administrator/list"} component={ListAdministratorPage} />
-                    <Route path={"/app/administration/administrator/list/ViewAdmin"} component={ViewAdmin} />
-
-
+                    
                   </Switch>
                 </CSSTransition>
               </TransitionGroup>

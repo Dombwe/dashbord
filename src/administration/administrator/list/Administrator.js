@@ -31,10 +31,10 @@ function ListAdministrator () {
    setSearchTerm(term);
  };
 
-    promise.then((administrators) => {
-      localStorage.setItem('administrators',JSON.stringify(administrators.data));
+    promise.then((value) => {
+      localStorage.setItem('administrators',JSON.stringify(value));
     });
-    const administrators = JSON.parse(localStorage.getItem('administrators'));
+    var administrators = JSON.parse(localStorage.getItem('administrators'));
 
     return (
         <div className={s.root}>
@@ -49,7 +49,6 @@ function ListAdministrator () {
           <Row>
             <Col sm={12}>
               <Widget
-                // customDropDown
                 title={<p className={"fw-bold text-warning"}>Les administrateurs du dashboard</p>}
               >
            <div className="main" style={{
@@ -116,7 +115,7 @@ function ListAdministrator () {
                             <td className={"pl-0 fw-normal text-center"}>{administrator.level}</td>
                             <td className={"pl-0 fw-normal text-center"}>
                             <Link to={`./add/Event/id=${administrator.id}`} style={{fontSize:"20px", marginRight:"15px"}}><i class="text-success fa fa-edit"></i></Link>
-                            <Link to={`./app/administration/administrator/list/ViewAdmin/id=${administrator.id}`} style={{fontSize:"20px", marginRight:"15px"}}><i class="text-success 	fa fa-plus-square"></i></Link>
+                            <Link to={`/app/administration/administrator/list/ViewAdmin/id=${administrator.id}`} style={{fontSize:"20px", marginRight:"15px"}}><i class="text-success 	fa fa-plus-square"></i></Link>
                             <Link onClick={() => onDeleteUser(administrator.id)} refresh="true" style={{fontSize:"20px"}}><i class="text-danger fa fa-trash-o"></i></Link>
                              
                             </td>                          
